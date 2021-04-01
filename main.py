@@ -12,6 +12,10 @@ class MyConnector:
         atexit.register(self.cursor.close)
         atexit.register(self.connection.close)
 
+    def query_exe(self, query):
+        self.cursor.execute(query)
+        self.connection.commit()
+
 
 def main():
 
@@ -24,13 +28,13 @@ def main():
         )
 
         query = "SELECT * FROM salary_calc.employee"
-        connection.cursor.execute(query)
+        connection.query_exe(query)
         for row in connection.cursor:
             print(row)
+
     except Error as e:
         print(e)
 
 
 if __name__ == '__main__':
     main()
-
