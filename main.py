@@ -37,10 +37,12 @@ class SalaryInterface(MyConnector):
         return self.cursor.fetchone()[0]
 
     def fill_schedule(self, employee_id, year, month, hours):
+        """ Fill every work day of the month worked out hours of employee """
         cal = calendar.Calendar()
         for day in cal.itermonthdates(year, month):
-            data = {'employeeId': employee_id, 'date': day, 'hours': hours}
-            self.add_employee_schedule(data)
+            if day.weekday() < 5:   # 5 is a Saturday
+                data = {'employeeId': employee_id, 'date': day, 'hours': hours}
+                self.add_employee_schedule(data)
 
     def calc_salary(self, employee_id, month, nominal_hours):
         pass
