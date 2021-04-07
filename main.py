@@ -1,3 +1,4 @@
+import os
 import datetime as dt
 
 from getpass import getpass
@@ -46,15 +47,11 @@ def main():
         salary = SalaryInterface({
                 'host': 'localhost',
                 'user': 'root',
-                'password': getpass(),
+                'password': os.environ.get('SQL_CONNECTOR_PASS'),
                 'database': 'salary_calc'}
         )
 
-        salary.add_employee({'name': 'Nikita A', 'positionId': 3})
         salary.show_table('employee')
-
-        rate = salary.get_position_rate(5)
-        print(rate)
 
     except Error as e:
         print(e)
