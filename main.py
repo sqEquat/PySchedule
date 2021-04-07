@@ -44,6 +44,14 @@ class SalaryInterface(MyConnector):
                 data = {'employeeId': employee_id, 'date': day, 'hours': hours}
                 self.add_employee_schedule(data)
 
+    def get_total_month_worked_out_hours(self, employee_id, year, month):
+        query = f"""select sum(sch.hours) from schedule sch
+                    where month(sch.date) = {month} and year(sch.date) = {year} and sch.employeeId = {employee_id}"""
+        self.select_query(query)
+
+        # fetchone return a tuple with one value, so [0] gets the value
+        return self.cursor.fetchone()[0]
+
     def calc_salary(self, employee_id, month, nominal_hours):
         pass
 
@@ -60,6 +68,8 @@ def main():
 
         # salary.fill_schedule(1, 2021, 4, 8)
         # salary.show_table('schedule')
+
+        print(salary.get_total_month_worked_out_hours(1, 2021, 4))
 
     except Error as e:
         print(e)
