@@ -22,13 +22,14 @@ class SalaryInterface(MyConnector):
     def add_employee(self, data):
         """ Add new employee """
 
-        query = "INSERT INTO employee (name, positionId) VALUES (%(name)s, %(positionId)s)"
-        self.insert_query(query, data)
+        query = f"INSERT INTO employee (name, positionId) VALUES ('{data['name']}', {data['position_id']})"
+        self.insert_query(query)
 
     def add_employee_schedule(self, data):
         """ Insert row with worked out hours of employee at the date """
 
-        query = "INSERT INTO schedule (employeeId, date, hours) VALUES (%(employeeId)s, %(date)s, %(hours)s)"
+        query = f"""INSERT INTO schedule (employeeId, date, hours)
+                    VALUES ({data['employee_id']}, '{data['date']}', {data['hours']})"""
         self.insert_query(query, data)
 
     def get_position_rate(self, employee_id):
@@ -47,7 +48,7 @@ class SalaryInterface(MyConnector):
         cal = Calendar()
         for day in cal.itermonthdates(year, month):
             if day.weekday() < 5:   # 5 is a Saturday
-                data = {'employeeId': employee_id, 'date': day, 'hours': hours}
+                data = {'employee_id': employee_id, 'date': day, 'hours': hours}
                 self.add_employee_schedule(data)
 
     def get_total_month_worked_out_hours(self, employee_id, year, month):
@@ -60,8 +61,13 @@ class SalaryInterface(MyConnector):
         # fetchone() return a tuple with one value, so [0] gets the value
         return self.cursor.fetchone()[0]
 
-    def calc_salary(self, employee_id, month, nominal_hours):
+    def calc_salary(self, data):
+        """ Insert row with information of employee payment in tne month of the year  """
+
+        employee_id = data['employee_id']
+        rate = self.get_position_rate(data['employee_id'])
         pass
+
 
 
 def main():
@@ -74,10 +80,11 @@ def main():
                 'database': 'salary_calc'}
         )
 
-        # salary.fill_schedule(2, 2021, 4, 8)
+        # salary.add_employee({'name': 'Anton C', 'position_id': 1})
+        salary.fill_schedule(12, 2021, 4, 5)
         # salary.show_table('schedule')
 
-        print(salary.get_total_month_worked_out_hours(1, 2021, 4))
+        print(salary.get_total_month_worked_out_hours(12, 2021, 4))
 
     except Error as e:
         print(e)
