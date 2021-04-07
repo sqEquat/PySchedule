@@ -11,10 +11,6 @@ class MyConnector:
         atexit.register(self.cursor.close)
         atexit.register(self.connection.close)
 
-    def query_exe(self, query):
-        self.cursor.execute(query)
-        self.connection.commit()
-
-    def insert_data(self, query, data):
+    def query_exe(self, query, data=None):
         self.cursor.execute(query, data)
         self.connection.commit()
