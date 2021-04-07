@@ -1,5 +1,7 @@
+import calendar
 import os
 import datetime as dt
+import calendar as cld
 
 from getpass import getpass
 from mysql.connector import Error
@@ -34,8 +36,11 @@ class SalaryInterface(MyConnector):
         # fetchone return a tuple with one value, so [0] gets the value
         return self.cursor.fetchone()[0]
 
-    def fill_schedule(self, employee_id):
-        pass
+    def fill_schedule(self, employee_id, year, month, hours):
+        cal = calendar.Calendar()
+        for day in cal.itermonthdates(year, month):
+            data = {'employeeId': employee_id, 'date': day, 'hours': hours}
+            self.add_employee_schedule(data)
 
     def calc_salary(self, employee_id, month, nominal_hours):
         pass
@@ -51,7 +56,8 @@ def main():
                 'database': 'salary_calc'}
         )
 
-        salary.show_table('employee')
+        # salary.fill_schedule(1, 2021, 4, 8)
+        # salary.show_table('schedule')
 
     except Error as e:
         print(e)
