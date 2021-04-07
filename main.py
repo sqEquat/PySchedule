@@ -13,22 +13,22 @@ class SalaryInterface(MyConnector):
 
     def show_table(self, table):
         query = f"SELECT * FROM {table}"
-        self.query_exe(query)
+        self.select_query(query)
         for row in self.cursor:
             print(row)
 
     def add_employee(self, data):
         query = "INSERT INTO employee (name, positionId) VALUES (%(name)s, %(positionId)s)"
-        self.query_exe(query, data)
+        self.insert_query(query, data)
 
     def add_employee_schedule(self, data):
         query = "INSERT INTO schedule (employeeId, date, hours) VALUES (%(employeeId)s, %(date)s, %(hours)s)"
-        self.query_exe(query, data)
+        self.insert_query(query, data)
 
     def get_position_rate(self, employee_id):
         query = f"""SELECT rate FROM salary_calc.position 
                     WHERE id = (SELECT positionId FROM employee WHERE id = {employee_id})"""
-        self.query_exe(query)
+        self.select_query(query)
 
         # fetchone return a tuple with one value, so [0] gets the value
         return self.cursor.fetchone()[0]
@@ -50,8 +50,10 @@ def main():
                 'database': 'salary_calc'}
         )
 
+        salary.add_employee({'name': 'Nikita A', 'positionId': 3})
+        salary.show_table('employee')
+
         rate = salary.get_position_rate(5)
-        print(type(rate))
         print(rate)
 
     except Error as e:
