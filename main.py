@@ -1,5 +1,6 @@
+import datetime as dt
+
 from getpass import getpass
-from datetime import date
 from mysql.connector import Error
 
 from myconnector import MyConnector
@@ -18,18 +19,22 @@ class SalaryInterface(MyConnector):
 
     def add_employee(self, data):
         query = "INSERT INTO employee (name, positionId) VALUES (%(name)s, %(positionId)s)"
-        self.insert_data(query, data)
+        self.query_exe(query, data)
 
     def add_employee_schedule(self, data):
         query = "INSERT INTO schedule (employeeId, date, hours) VALUES (%(employeeId)s, %(date)s, %(hours)s)"
-        self.insert_data(query, data)
+        self.query_exe(query, data)
 
     def get_position_rate(self, employee_id):
         query = f"""SELECT rate FROM salary_calc.position 
                     WHERE id = (SELECT positionId FROM employee WHERE id = {employee_id})"""
         self.query_exe(query)
 
-        return [x for x in self.cursor][0][0]
+        # fetchone return a tuple with one value, so [0] gets the value
+        return self.cursor.fetchone()[0]
+
+    def fill_schedule(self, employee_id):
+        pass
 
     def calc_salary(self, employee_id, month, nominal_hours):
         pass
@@ -45,12 +50,8 @@ def main():
                 'database': 'salary_calc'}
         )
 
-        # salary.add_employee({'name': 'Stanislav G', 'positionId': 2})
-        # today = date(2020, 3, 27)
-        # salary.add_employee_schedule({'employeeId': '1', 'date': today, 'hours': 8})
-        # salary.show_table('employee')
-        # salary.show_table('schedule')
-        rate = salary.get_position_rate(1)
+        rate = salary.get_position_rate(5)
+        print(type(rate))
         print(rate)
 
     except Error as e:
