@@ -78,6 +78,12 @@ class SalaryInterface(MyConnector):
                     VALUES ({employee_id}, '{payment_date}', {total_hours}, {nominal_hours}, {rate}, {payment_sum:.2f}, {status_id})"""
         self.insert_query(query)
 
+    def get_position_list(self):
+        query = "SELECT title FROM position"
+        self.select_query(query)
+
+        return [pos[0] for pos in self.cursor.fetchall()]
+
 
 def main():
 
@@ -93,8 +99,8 @@ def main():
         # salary.fill_schedule(12, 2021, 4, 5)
         # salary.show_table('schedule')
 
-        salary.calc_salary({'employee_id': 1, 'month': 4, 'year': 2021, 'nominal_hours': 160})
-        salary.show_table('payment')
+        # salary.calc_salary({'employee_id': 1, 'month': 4, 'year': 2021, 'nominal_hours': 160})
+        print(salary.get_position_list())
 
     except Error as e:
         print(e)
