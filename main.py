@@ -13,13 +13,15 @@ class SalaryInterface(MyConnector):
     def __init__(self, param):
         super().__init__(param)
 
-    def show_table(self, table):
+    def get_table(self, table):
         """ Display all rows of the table """
 
         query = f"SELECT * FROM {table}"
         self.select_query(query)
-        for row in self.cursor:
-            print(row)
+        table = self.cursor.fetchall()
+
+        result = [(len(table), len(table[0])), table]
+        return result
 
     def add_employee(self, data):
         """ Add new employee """
@@ -100,7 +102,7 @@ def main():
         # salary.show_table('schedule')
 
         # salary.calc_salary({'employee_id': 1, 'month': 4, 'year': 2021, 'nominal_hours': 160})
-        print(salary.get_position_list())
+        salary.show_table('employee')
 
     except Error as e:
         print(e)
