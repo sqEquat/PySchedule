@@ -12,26 +12,30 @@ class SalaryGui(SalaryInterface):
         super().__init__(param)
 
         self.ui = ui
-        self.tab_tables_dict = {
-            'employee': ui.employeesTable,
-            'schedule': ui.scheduleTable,
-            'payments': ui.positionsTable
-        }
+        self.table_by_index = [
+            ('employee', ui.employeesTable),
+            ('schedule', ui.scheduleTable),
+            ('payment', ui.paymentsTable),
+            ('position', ui.positionsTable)
+        ]
 
-    def show_table(self, table_name):
+    def show_table(self, table_index):
+        table_name = self.table_by_index[table_index][0]
         table_data = self.get_table(table_name)
         table_shape = table_data[0]
-        table = table_data[1]
+        table_rows = table_data[1]
 
-        table_gui = self.tab_tables_dict[table_name]
+        table_gui = self.table_by_index[table_index][1]
         table_gui.setColumnCount(table_shape[1])
         table_gui.setRowCount(table_shape[0])
-        for row, tup in enumerate(table):
+        for row, tup in enumerate(table_rows):
             for col, item in enumerate(tup):
                 cell_value = QtWidgets.QTableWidgetItem(str(item))
                 cell_value.setTextAlignment(QtCore.Qt.AlignCenter)
                 table_gui.setItem(row, col, cell_value)
-                table_gui.res
+
+    def tab_changed(self):
+        self.show_table(self.ui.tabBar.currentIndex())
 
 
 class MyWindow(QtWidgets.QMainWindow):
@@ -47,7 +51,7 @@ class MyWindow(QtWidgets.QMainWindow):
                 'database': 'salary_calc'
         }, self.ui)
 
-        self.salary.show_table('employee')
+        self.ui.tabBar.currentChanged.connect(self.salary.tab_changed)
 
 
 def main():
