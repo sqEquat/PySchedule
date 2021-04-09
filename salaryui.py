@@ -13,15 +13,25 @@ class SalaryGui(SalaryInterface):
 
         self.ui = ui
         self.tab_tables_dict = {
-            'empTab': ui.employeestable,
-            'schtab': ui.scheduletable,
-            'payTab': ui.posTab
+            'employee': ui.employeesTable,
+            'schedule': ui.scheduleTable,
+            'payments': ui.positionsTable
         }
 
-    def show_table(self, table_name, ui_tab_table):
+    def show_table(self, table_name):
         table_data = self.get_table(table_name)
         table_shape = table_data[0]
         table = table_data[1]
+
+        table_gui = self.tab_tables_dict[table_name]
+        table_gui.setColumnCount(table_shape[1])
+        table_gui.setRowCount(table_shape[0])
+        for row, tup in enumerate(table):
+            for col, item in enumerate(tup):
+                cell_value = QtWidgets.QTableWidgetItem(str(item))
+                cell_value.setTextAlignment(QtCore.Qt.AlignCenter)
+                table_gui.setItem(row, col, cell_value)
+                table_gui.res
 
 
 class MyWindow(QtWidgets.QMainWindow):
@@ -30,26 +40,14 @@ class MyWindow(QtWidgets.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-        self.ui.label.setFont(QtGui.QFont('Times'))
-
-        salary = SalaryGui({
+        self.salary = SalaryGui({
                 'host': 'localhost',
                 'user': 'root',
                 'password': os.environ.get('SQL_CONNECTOR_PASS'),
-                'database': 'salary_calc'}
-        )
+                'database': 'salary_calc'
+        }, self.ui)
 
-        table = salary.get_table('position')
-        position_shape = table[0]
-        self.ui.comboBox.addItems(salary.get_position_list())
-        self.ui.tableWidget.setColumnCount(position_shape[1])
-        self.ui.tableWidget.setRowCount(position_shape[0])
-        position_table = table[1]
-        for row, tup in enumerate(position_table):
-            for col, item in enumerate(tup):
-                cell_value = QtWidgets.QTableWidgetItem(str(item))
-                cell_value.setTextAlignment(QtCore.Qt.AlignCenter)
-                self.ui.tableWidget.setItem(row, col, cell_value)
+        self.salary.show_table('employee')
 
 
 def main():
