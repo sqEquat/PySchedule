@@ -51,6 +51,7 @@ class MyWindow(QtWidgets.QMainWindow):
                 'database': 'salary_calc'
         }, self.ui)
 
+        self.salary.show_table(0)
         self.ui.tabBar.currentChanged.connect(self.salary.tab_changed)
 
 
