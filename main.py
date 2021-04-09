@@ -14,7 +14,7 @@ class SalaryInterface(MyConnector):
         super().__init__(param)
 
     def get_table(self, table):
-        """ Display all rows of the table """
+        """ Return table shape and table data """
 
         query = f"SELECT * FROM {table}"
         self.select_query(query)
@@ -22,6 +22,15 @@ class SalaryInterface(MyConnector):
 
         result = [(len(table), len(table[0])), table]
         return result
+
+    def get_table_header(self, table):
+        """ Return titles of columns """
+
+        query = f"SHOW columns FROM {table}"
+
+        self.select_query(query)
+        header = self.cursor.fetchall()
+        return [row[0] for row in header]
 
     def add_employee(self, data):
         """ Add new employee """
@@ -102,7 +111,7 @@ def main():
         # salary.show_table('schedule')
 
         # salary.calc_salary({'employee_id': 1, 'month': 4, 'year': 2021, 'nominal_hours': 160})
-        salary.show_table('employee')
+        print(salary.get_table_header('employee'))
 
     except Error as e:
         print(e)
