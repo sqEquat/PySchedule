@@ -6,7 +6,7 @@ from design.mainwindow import Ui_MainWindow
 from design.addemployee import Ui_AddEmployee
 from design.addschedule import Ui_AddSchedule
 
-from main import SalaryInterface
+from salaryinterface import SalaryInterface
 
 
 class SalaryGui(SalaryInterface):
@@ -41,9 +41,6 @@ class SalaryGui(SalaryInterface):
 
         table_gui.resizeColumnsToContents()
 
-    def tab_changed(self):
-        self.show_table(self.ui.tabBar.currentIndex())
-
 
 class AddEmployeeWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -74,17 +71,21 @@ class MainWindow(QtWidgets.QMainWindow):
                 'database': 'salary_calc'
         }, self.ui)
 
-        self.windows = [AddEmployeeWindow, AddSchedule]
+        self.tab_to_window = [AddEmployeeWindow, AddSchedule]
 
         self.ui.tabBar.setCurrentIndex(0)
         self.salary.show_table(0)
 
-        self.ui.tabBar.currentChanged.connect(self.salary.tab_changed)
+        self.ui.tabBar.currentChanged.connect(self.tab_changed)
         self.ui.addButton.clicked.connect(self.open_window)
+
+    def tab_changed(self):
+        tab_index = self.ui.tabBar.currentIndex()
+        self.salary.show_table(tab_index)
 
     def open_window(self):
         tab_index = self.ui.tabBar.currentIndex()
-        self.window = self.windows[tab_index]()
+        self.window = self.tab_to_window[tab_index]()
         self.window.show()
 
 
