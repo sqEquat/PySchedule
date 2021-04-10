@@ -17,3 +17,7 @@ class MyConnector:
 
     def select_query(self, query):
         self.cursor.execute(query)
+
+    def delete_query(self, query):
+        self.cursor.execute(query)
+        self.connection.commit()
