@@ -10,6 +10,7 @@ from salaryinterface import SalaryInterface
 
 
 class SalaryGui(SalaryInterface):
+    """ Connector between main window gui and salary connector """
     def __init__(self, param, ui):
         super().__init__(param)
 
@@ -43,14 +44,39 @@ class SalaryGui(SalaryInterface):
 
 
 class AddEmployeeWindow(QtWidgets.QMainWindow):
-    def __init__(self):
+    """ Add new row into employee window """
+    def __init__(self, salary):
         super().__init__()
         self.ui = Ui_AddEmployee()
         self.ui.setupUi(self)
 
+        self.salary = salary
+        self.position = self.salary.get_table('position')[1]
+        self.set_position_combobox()
 
-class AddSchedule(QtWidgets.QMainWindow):
-    def __init__(self):
+        self.ui.add_button.clicked.connect(self.add_employee)
+        self.ui.cancel_button.clicked.connect(self.cancel)
+
+    def add_employee(self):
+        name = self.ui.employee_name_line.text()
+        # Position list contains tuple (position_id, title, rate),
+        # combobox index is equal list index and [0] return position_id
+        position_id = self.position[self.ui.position_combobox.currentIndex()][0]
+        self.salary.add_employee(name, position_id)
+        self.salary.show_table(self.salary.ui.tabBar.currentIndex())
+        self.close()
+
+    def cancel(self):
+        self.close()
+
+    def set_position_combobox(self):
+        positions = [pos[1] for pos in self.position]
+        self.ui.position_combobox.addItems(positions)
+
+
+class AddScheduleWindow(QtWidgets.QMainWindow):
+    """ Add new row into schedule table """
+    def __init__(self, salary):
         super().__init__()
         self.ui = Ui_AddSchedule()
         self.ui.setupUi(self)
@@ -71,7 +97,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 'database': 'salary_calc'
         }, self.ui)
 
-        self.tab_to_window = [AddEmployeeWindow, AddSchedule]
+        self.tab_to_window = [AddEmployeeWindow, AddScheduleWindow]
 
         self.ui.tabBar.setCurrentIndex(0)
         self.salary.show_table(0)
@@ -85,7 +111,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def open_window(self):
         tab_index = self.ui.tabBar.currentIndex()
-        self.window = self.tab_to_window[tab_index]()
+        self.window = self.tab_to_window[tab_index](self.salary)
         self.window.show()
 
 
