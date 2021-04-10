@@ -32,18 +32,22 @@ class SalaryInterface(MyConnector):
         header = self.cursor.fetchall()
         return [row[0] for row in header]
 
-    def add_employee(self, data):
+    def add_employee(self, name, position_id):
         """ Add new employee """
 
-        query = f"INSERT INTO employee (name, positionId) VALUES ('{data['name']}', {data['position_id']})"
+        query = f"INSERT INTO employee (name, positionId) VALUES ('{name}', {position_id})"
         self.insert_query(query)
 
-    def add_employee_schedule(self, data):
+    def del_employee(self, employee_id):
+        query = f"DELETE FROM employee WHERE id = {employee_id}"
+        self.delete_query(query)
+
+    def add_employee_schedule(self, employee_id, sch_date, hours):
         """ Insert row with worked out hours of employee at the date """
 
         query = f"""INSERT INTO schedule (employeeId, date, hours)
-                    VALUES ({data['employee_id']}, '{data['date']}', {data['hours']})"""
-        self.insert_query(query, data)
+                    VALUES ({employee_id}, '{sch_date}', {hours})"""
+        self.insert_query(query)
 
     def get_position_rate(self, employee_id):
         """ Return position rate of the employee """
@@ -111,7 +115,8 @@ def main():
         # salary.show_table('schedule')
 
         # salary.calc_salary({'employee_id': 1, 'month': 4, 'year': 2021, 'nominal_hours': 160})
-        print(salary.get_table_header('employee'))
+
+        salary.del_employee(17)
 
     except Error as e:
         print(e)
