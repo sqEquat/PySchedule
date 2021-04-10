@@ -36,6 +36,8 @@ class SalaryGui(SalaryInterface):
                 cell_value.setTextAlignment(QtCore.Qt.AlignCenter)
                 table_gui.setItem(row, col, cell_value)
 
+        table_gui.resizeColumnsToContents()
+
     def tab_changed(self):
         self.show_table(self.ui.tabBar.currentIndex())
 
