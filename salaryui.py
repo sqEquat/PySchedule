@@ -2,7 +2,9 @@ import sys
 import os
 
 from PyQt5 import QtWidgets, QtGui, QtCore
-from design import Ui_MainWindow
+from design.mainwindow import Ui_MainWindow
+from design.addemployee import Ui_AddEmployee
+from design.addschedule import Ui_AddSchedule
 
 from main import SalaryInterface
 
@@ -14,9 +16,10 @@ class SalaryGui(SalaryInterface):
         self.ui = ui
         self.table_by_index = [
             ('employee', ui.employeesTable),
-            ('schedule', ui.scheduleTable),
+            ('schedule', ui.schedulesTable),
             ('payment', ui.paymentsTable),
-            ('position', ui.positionsTable)
+            ('position', ui.positionsTable),
+            ('paymentstatus', ui.payStatusTable)
         ]
 
     def show_table(self, table_index):
@@ -42,11 +45,27 @@ class SalaryGui(SalaryInterface):
         self.show_table(self.ui.tabBar.currentIndex())
 
 
-class MyWindow(QtWidgets.QMainWindow):
+class AddEmployeeWindow(QtWidgets.QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.ui = Ui_AddEmployee()
+        self.ui.setupUi(self)
+
+
+class AddSchedule(QtWidgets.QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.ui = Ui_AddSchedule()
+        self.ui.setupUi(self)
+
+
+class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+
+        self.window = None
 
         self.salary = SalaryGui({
                 'host': 'localhost',
@@ -55,13 +74,23 @@ class MyWindow(QtWidgets.QMainWindow):
                 'database': 'salary_calc'
         }, self.ui)
 
+        self.windows = [AddEmployeeWindow, AddSchedule]
+
+        self.ui.tabBar.setCurrentIndex(0)
         self.salary.show_table(0)
+
         self.ui.tabBar.currentChanged.connect(self.salary.tab_changed)
+        self.ui.addButton.clicked.connect(self.open_window)
+
+    def open_window(self):
+        tab_index = self.ui.tabBar.currentIndex()
+        self.window = self.windows[tab_index]()
+        self.window.show()
 
 
 def main():
     app = QtWidgets.QApplication([])
-    application = MyWindow()
+    application = MainWindow()
     application.show()
 
     sys.exit(app.exec())
