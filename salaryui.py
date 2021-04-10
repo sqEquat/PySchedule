@@ -42,6 +42,16 @@ class SalaryGui(SalaryInterface):
 
         table_gui.resizeColumnsToContents()
 
+    def delete_row(self, table_index):
+        table_name = self.table_by_index[table_index][0]
+        table_gui = self.table_by_index[table_index][1]
+        for index in table_gui.selectedIndexes():
+            row = index.row()
+            item_id = table_gui.item(row, 0).text()
+            self.del_by_id(table_name, item_id)
+
+        self.show_table(table_index)
+
 
 class AddEmployeeWindow(QtWidgets.QMainWindow):
     """ Add new row into employee window """
@@ -104,6 +114,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.ui.tabBar.currentChanged.connect(self.tab_changed)
         self.ui.addButton.clicked.connect(self.open_window)
+        self.ui.delButton.clicked.connect(self.delete_selected_row)
 
     def tab_changed(self):
         tab_index = self.ui.tabBar.currentIndex()
@@ -113,6 +124,11 @@ class MainWindow(QtWidgets.QMainWindow):
         tab_index = self.ui.tabBar.currentIndex()
         self.window = self.tab_to_window[tab_index](self.salary)
         self.window.show()
+
+    def delete_selected_row(self):
+        tab_index = self.ui.tabBar.currentIndex()
+        self.salary.delete_row(tab_index)
+
 
 
 def main():
