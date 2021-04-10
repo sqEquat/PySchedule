@@ -38,8 +38,8 @@ class SalaryInterface(MyConnector):
         query = f"INSERT INTO employee (name, positionId) VALUES ('{name}', {position_id})"
         self.insert_query(query)
 
-    def del_employee(self, employee_id):
-        query = f"DELETE FROM employee WHERE id = {employee_id}"
+    def del_by_id(self, table, item_id):
+        query = f"DELETE FROM {table} WHERE id = {item_id}"
         self.delete_query(query)
 
     def add_employee_schedule(self, employee_id, sch_date, hours):
