@@ -1,10 +1,12 @@
 import sys
 import os
 
-from PyQt5 import QtWidgets, QtGui, QtCore
+from PyQt5 import QtWidgets, QtCore
 from design.mainwindow import Ui_MainWindow
 from design.addemployee import Ui_AddEmployee
 from design.addschedule import Ui_AddSchedule
+
+from mysql.connector import Error
 
 from salaryinterface import SalaryInterface
 
@@ -25,13 +27,15 @@ class SalaryGui(SalaryInterface):
 
     def show_table(self, table_index):
         table_name = self.table_by_index[table_index][0]
-        table_data = self.get_table(table_name)
-        table_header = self.get_table_header(table_name)
         table_shape = (self.get_table_shape(table_name))
+        table_header = self.get_table_header(table_name)
+        table_data = self.get_table(table_name)
 
         table_gui = self.table_by_index[table_index][1]
+
         table_gui.setColumnCount(table_shape[0])
         table_gui.setRowCount(table_shape[1])
+
         table_gui.setHorizontalHeaderLabels(table_header)
         for row, tup in enumerate(table_data):
             for col, item in enumerate(tup):
@@ -44,10 +48,13 @@ class SalaryGui(SalaryInterface):
     def delete_row(self, table_index):
         table_name = self.table_by_index[table_index][0]
         table_gui = self.table_by_index[table_index][1]
-        for index in table_gui.selectedIndexes():
-            row = index.row()
-            item_id = table_gui.item(row, 0).text()
-            self.del_by_id(table_name, item_id)
+        try:
+            for index in table_gui.selectedIndexes():
+                row = index.row()
+                item_id = table_gui.item(row, 0).text()
+                self.del_by_id(table_name, item_id)
+        except Error as e:
+            print(e)
 
         self.show_table(table_index)
 
@@ -127,7 +134,6 @@ class MainWindow(QtWidgets.QMainWindow):
     def delete_selected_row(self):
         tab_index = self.ui.tabBar.currentIndex()
         self.salary.delete_row(tab_index)
-
 
 
 def main():
