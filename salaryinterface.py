@@ -18,10 +18,23 @@ class SalaryInterface(MyConnector):
 
         query = f"SELECT * FROM {table}"
         self.select_query(query)
-        table = self.cursor.fetchall()
 
-        result = [(len(table), len(table[0])), table]
-        return result
+        return self.cursor.fetchall()
+
+    def get_table_shape(self, table):
+        """ Return shape of the table """
+
+        query = f"""SELECT COUNT(*) FROM information_schema.columns
+                    WHERE table_schema = 'salary_calc' AND table_name = '{table}'"""
+
+        self.select_query(query)
+        column_num = self.cursor.fetchone()[0]
+
+        query = f"""SELECT COUNT(*) FROM {table}"""
+        self.select_query(query)
+        row_num = self.cursor.fetchone()[0]
+
+        return column_num, row_num
 
     def get_table_header(self, table):
         """ Return titles of columns """
@@ -116,7 +129,8 @@ def main():
 
         # salary.calc_salary({'employee_id': 1, 'month': 4, 'year': 2021, 'nominal_hours': 160})
 
-        salary.del_employee(17)
+        print(salary.get_table_shape('position'))
+        print(salary.get_table('position'))
 
     except Error as e:
         print(e)

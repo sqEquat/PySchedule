@@ -27,14 +27,13 @@ class SalaryGui(SalaryInterface):
         table_name = self.table_by_index[table_index][0]
         table_data = self.get_table(table_name)
         table_header = self.get_table_header(table_name)
-        table_shape = table_data[0]
-        table_rows = table_data[1]
+        table_shape = (self.get_table_shape(table_name))
 
         table_gui = self.table_by_index[table_index][1]
-        table_gui.setColumnCount(table_shape[1])
-        table_gui.setRowCount(table_shape[0])
+        table_gui.setColumnCount(table_shape[0])
+        table_gui.setRowCount(table_shape[1])
         table_gui.setHorizontalHeaderLabels(table_header)
-        for row, tup in enumerate(table_rows):
+        for row, tup in enumerate(table_data):
             for col, item in enumerate(tup):
                 cell_value = QtWidgets.QTableWidgetItem(str(item))
                 cell_value.setTextAlignment(QtCore.Qt.AlignCenter)
