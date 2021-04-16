@@ -14,9 +14,9 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(800, 600)
-        MainWindow.setMinimumSize(QtCore.QSize(800, 600))
-        MainWindow.setMaximumSize(QtCore.QSize(800, 600))
+        MainWindow.resize(800, 610)
+        MainWindow.setMinimumSize(QtCore.QSize(800, 610))
+        MainWindow.setMaximumSize(QtCore.QSize(800, 610))
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.tabBar = QtWidgets.QTabWidget(self.centralwidget)
@@ -72,6 +72,9 @@ class Ui_MainWindow(object):
         self.delButton.setGeometry(QtCore.QRect(690, 120, 91, 23))
         self.delButton.setObjectName("delButton")
         MainWindow.setCentralWidget(self.centralwidget)
+        self.statusBar = QtWidgets.QStatusBar(MainWindow)
+        self.statusBar.setObjectName("statusBar")
+        MainWindow.setStatusBar(self.statusBar)
 
         self.retranslateUi(MainWindow)
         self.tabBar.setCurrentIndex(0)

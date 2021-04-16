@@ -54,7 +54,7 @@ class SalaryGui(SalaryInterface):
                 item_id = table_gui.item(row, 0).text()
                 self.del_by_id(table_name, item_id)
         except Error as e:
-            print(e)
+            self.ui.statusBar.showMessage(str(e))
 
         self.show_table(table_index)
 
