@@ -4,7 +4,6 @@ import os
 from PyQt5 import QtWidgets, QtCore
 from design.mainwindow import Ui_MainWindow
 from design.addemployee import Ui_AddEmployee
-from design.addschedule import Ui_AddSchedule
 
 from mysql.connector import Error
 
@@ -76,7 +75,7 @@ class AddEmployeeWindow(QtWidgets.QMainWindow):
     def add_employee(self):
         name = self.ui.employee_name_line.text()
         # Position list contains tuple (position_id, title, rate),
-        # combobox index is equal list index and [0] return position_id
+        # combobox index is equal to list index and [0] return position_id
         position_id = self.position[self.ui.position_combobox.currentIndex()][0]
         self.salary.add_employee(name, position_id)
         self.salary.show_table(self.salary.ui.tabBar.currentIndex())
@@ -88,14 +87,6 @@ class AddEmployeeWindow(QtWidgets.QMainWindow):
     def set_position_combobox(self):
         positions = [pos[1] for pos in self.position]
         self.ui.position_combobox.addItems(positions)
-
-
-class AddScheduleWindow(QtWidgets.QMainWindow):
-    """ Add new row into schedule table """
-    def __init__(self, salary):
-        super().__init__()
-        self.ui = Ui_AddSchedule()
-        self.ui.setupUi(self)
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -113,7 +104,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 'database': 'salary_calc'
         }, self.ui)
 
-        self.tab_to_window = [AddEmployeeWindow, AddScheduleWindow]
+        self.tab_to_window = [AddEmployeeWindow]
 
         self.ui.tabBar.setCurrentIndex(0)
         self.salary.show_table(0)
